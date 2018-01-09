@@ -32,7 +32,7 @@ index ee85c9bad..3f7e085af 100644
 +    format =
 +    usage  = 0;
 +    handle = NULL;
-+    mInitCheck = initSize(inWidth, inHeight, inFormat, inUsage, "<Unknown>");
++    mInitCheck = initWithSize(inWidth, inHeight, inFormat, 1,inUsage, "<Unknown>");
 +}
 +
  // deprecated
