@@ -85,9 +85,8 @@ PRODUCT_PACKAGES += \
    android.hardware.radio.deprecated@1.0 \
    libccci_util
 
+#WiFi
 PRODUCT_PACKAGES += \
-   android.hardware.wifi@1.0 \
-   android.hardware.wifi@1.0-impl \
    android.hardware.wifi@1.0-service \
    librs_jni \
    com.android.future.usb.accessory \
@@ -104,7 +103,7 @@ PRODUCT_PACKAGES += \
 
 # Mtk shims
 PRODUCT_PACKAGES += \
-   libmtkshim_gui
+   libmtk_ui
 
 DEVICE_PACKAGE_OVERLAYS := $(LOCAL_PATH)/overlay
 
