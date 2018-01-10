@@ -81,6 +81,8 @@ $(call inherit-product-if-exists, frameworks/native/build/phone-xxhdpi-2048-hwui
 
 # RIL
 PRODUCT_PACKAGES += \
+   android.hardware.radio@1.0 \
+   android.hardware.radio.deprecated@1.0 \
    libccci_util
 
 PRODUCT_PACKAGES += \
