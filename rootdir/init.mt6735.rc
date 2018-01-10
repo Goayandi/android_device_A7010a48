@@ -12,8 +12,6 @@ on early-init
 on init
     # Shims
     export LD_SHIM_LIBS "/vendor/lib/libmtkcamera_client.so|libmtkshim_gui.so:/vendor/lib64/libmtkcamera_client.so|libmtkshim_gui.so"
-    # Temp Backward compatibility
-    symlink /sdcard /mnt/sdcard
     
     mkdir /protect_f 0771 system system
     mkdir /protect_s 0771 system system
