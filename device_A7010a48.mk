@@ -102,8 +102,7 @@ PRODUCT_PACKAGES += \
 
 # Mtk shims
 PRODUCT_PACKAGES += \
-   libmtkshim_log \
-   libmtkshim_audio
+   libmtkshim_gui
 
 DEVICE_PACKAGE_OVERLAYS := $(LOCAL_PATH)/overlay
 
