@@ -85,11 +85,11 @@
     <bool name="config_batterySdCardAccessibility">true</bool>
 
     <string-array name="config_tether_usb_regexs">
-        <item>"rndis0"</item>
+ 	<item>"rndis\\d"</item>
     </string-array>
 
     <string-array name="config_tether_wifi_regexs">
-        <item>"wlan0"</item>
+	<item>"wlan\\d"</item>
     </string-array>
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable

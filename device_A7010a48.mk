@@ -85,21 +85,24 @@ PRODUCT_PACKAGES += \
    android.hardware.radio.deprecated@1.0 \
    libccci_util
 
-#WiFi
+# Misc
 PRODUCT_PACKAGES += \
-   android.hardware.wifi@1.0-service \
    librs_jni \
    com.android.future.usb.accessory \
-   libwpa_client \
-   lib_driver_cmd_mt66xx \
-   libwifi-hal-mt66xx \
-   hostapd \
-   wificond \
-   wifilogd \
-   wpa_supplicant \
-   wpa_supplicant.conf \
    muxreport \
    terservice
+
+# WiFi
+PRODUCT_PACKAGES += \
+    android.hardware.wifi@1.0-service \
+    dhcpcd.conf \
+    hostapd \
+    lib_driver_cmd_mt66xx \
+    libwpa_client \
+    wificond \
+    wifilogd \
+    wpa_supplicant \
+    wpa_supplicant.conf
 
 # Mtk shims
 PRODUCT_PACKAGES += \

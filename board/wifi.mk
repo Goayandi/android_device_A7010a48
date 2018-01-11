@@ -1,4 +1,4 @@
-# Wifi
+# Wlan
 BOARD_WLAN_DEVICE		 := MediaTek
 BOARD_CONNECTIVITY_VENDOR        := MediaTek
 WPA_SUPPLICANT_VERSION           := VER_0_8_X
