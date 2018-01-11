@@ -55,29 +55,20 @@
 ***************************************************************************/
 
 #define COMBO_IOC_MAGIC         0xb0
-#define COMBO_IOCTL_FW_ASSERT   _IOWR(COMBO_IOC_MAGIC, 0, int)
-#define COMBO_IOCTL_BT_SET_PSM  _IOWR(COMBO_IOC_MAGIC, 1, bool)
+#define COMBO_IOCTL_FW_ASSERT   _IOW(COMBO_IOC_MAGIC, 0, int)
+#define COMBO_IOCTL_BT_SET_PSM  _IOW(COMBO_IOC_MAGIC, 1, bool)
 /**************************************************************************
  *                  G L O B A L   V A R I A B L E S                       *
 ***************************************************************************/
 
-bt_vendor_callbacks_t *bt_vnd_cbacks = NULL;
+const bt_vendor_callbacks_t *bt_vnd_cbacks = NULL;
 static int  bt_fd = -1;
 
 /**************************************************************************
  *              F U N C T I O N   D E C L A R A T I O N S                 *
 ***************************************************************************/
 
-extern BOOL BT_InitDevice(
-    UINT32  chipId,
-    PUCHAR  pucNvRamData,
-    UINT32  u4Baud,
-    UINT32  u4HostBaud,
-    UINT32  u4FlowControl,
-    SETUP_UART_PARAM_T setup_uart_param
-);
-
-extern BOOL BT_InitSCO(VOID);
+extern BOOL BT_InitDevice(UINT32 chipId, PUCHAR pucNvRamData);
 extern BOOL BT_DeinitDevice(VOID);
 extern VOID BT_Cleanup(VOID);
 
@@ -109,18 +100,9 @@ void clean_callbacks(void)
 /* Initialize UART port */
 int init_uart(void)
 {
-    int retry = 0;
     LOG_TRC();
 
-    bt_fd = open("/dev/stpbt", O_RDWR | O_NOCTTY | O_NONBLOCK | O_CLOEXEC);
-
-    while ((-1 == bt_fd) && (retry < 7)) {
-        LOG_ERR("Can`t open /dev/stpbt. Retry after 2 seconds");
-        usleep(2000000);
-        bt_fd = open("/dev/stpbt", O_RDWR | O_NOCTTY);
-        retry++;
-    }
-
+    bt_fd = open("/dev/stpbt", O_RDWR | O_NOCTTY | O_NONBLOCK);
     if (bt_fd < 0) {
         LOG_ERR("Can't open /dev/stpbt (%s), errno[%d]\n", strerror(errno), errno);
         return -1;
@@ -167,7 +149,7 @@ static int bt_get_combo_id(unsigned int *pChipId)
 
 static int bt_read_nvram(unsigned char *pucNvRamData)
 {
-    F_ID bt_nvram_fd = {0};
+    F_ID bt_nvram_fd;
     int rec_size = 0;
     int rec_num = 0;
     ap_nvram_btradio_struct bt_nvram;
@@ -207,7 +189,7 @@ static int bt_read_nvram(unsigned char *pucNvRamData)
     }
 
     if (rec_size != sizeof(ap_nvram_btradio_struct)) {
-        LOG_ERR("Unexpected record size %d ap_nvram_btradio_struct %d",
+        LOG_ERR("Unexpected record size %d ap_nvram_btradio_struct %zu",
                 rec_size, sizeof(ap_nvram_btradio_struct));
         NVM_CloseFileDesc(bt_nvram_fd);
         return -1;
@@ -230,8 +212,6 @@ int mtk_fw_cfg(void)
 {
     unsigned int chipId = 0;
     unsigned char ucNvRamData[sizeof(ap_nvram_btradio_struct)] = {0};
-    unsigned int speed, flow_control;
-    SETUP_UART_PARAM_T uart_setup_callback = NULL;
 
     LOG_TRC();
 
@@ -245,7 +225,7 @@ int mtk_fw_cfg(void)
     if ((bt_read_nvram(ucNvRamData) < 0) ||
           is_memzero(ucNvRamData, sizeof(ap_nvram_btradio_struct))) {
         LOG_WAN("Read NVRAM data fails or NVRAM data all zero!!\n");
-        LOG_WAN("Use %x default value\n", chipId);
+        LOG_WAN("Use %04x default value\n", chipId);
         switch (chipId) {
           case 0x6628:
             /* Use MT6628 default value */
@@ -255,52 +235,35 @@ int mtk_fw_cfg(void)
             /* Use MT6630 default value */
             memcpy(ucNvRamData, &stBtDefault_6630, sizeof(ap_nvram_btradio_struct));
             break;
+          case 0x6632:
+            /* Use MT6632 default value */
+            memcpy(ucNvRamData, &stBtDefault_6632, sizeof(ap_nvram_btradio_struct));
+            break;
           case 0x8163:
-            /* NVRAM is MT8163 default */
-            memcpy(ucNvRamData, &stBtDefault_8163, sizeof(ap_nvram_btradio_struct));
-            break;
           case 0x8127:
-            /* Use MT8127 default value */
-            memcpy(ucNvRamData, &stBtDefault_8127, sizeof(ap_nvram_btradio_struct));
-            break;
+          case 0x8167:
           case 0x6582:
-            /* Use MT6582 default value */
-            memcpy(ucNvRamData, &stBtDefault_6582, sizeof(ap_nvram_btradio_struct));
-            break;
           case 0x6592:
-            /* Use MT6592 default value */
-            memcpy(ucNvRamData, &stBtDefault_6592, sizeof(ap_nvram_btradio_struct));
-            break;
           case 0x6752:
-            /* Use MT6752 default value */
-            memcpy(ucNvRamData, &stBtDefault_6752, sizeof(ap_nvram_btradio_struct));
-            break;
           case 0x0321:
-            /* Use MT6735 default value */
-            memcpy(ucNvRamData, &stBtDefault_6735, sizeof(ap_nvram_btradio_struct));
-            break;
           case 0x0335:
-            /* Use MT6735m default value */
-            memcpy(ucNvRamData, &stBtDefault_6735m, sizeof(ap_nvram_btradio_struct));
-            break;
           case 0x0337:
-            /* Use MT6735m default value */
-            memcpy(ucNvRamData, &stBtDefault_6753, sizeof(ap_nvram_btradio_struct));
-            break;
           case 0x6580:
-            /* Use MT6580 default value */
-            memcpy(ucNvRamData, &stBtDefault_6580, sizeof(ap_nvram_btradio_struct));
-            break;
+          case 0x6570:
           case 0x6755:
-            /* Use MT6755 default value */
-            memcpy(ucNvRamData, &stBtDefault_6755, sizeof(ap_nvram_btradio_struct));
-            break;
           case 0x6797:
-            /* Use MT6797 default value */
-            memcpy(ucNvRamData, &stBtDefault_6797, sizeof(ap_nvram_btradio_struct));
+          case 0x6757:
+          case 0x6759:
+          case 0x6763:
+          case 0x6758:
+          case 0x6739:
+          case 0x6771:
+          case 0x6775:
+            /* Use A-D die default value */
+            memcpy(ucNvRamData, &stBtDefault_consys, sizeof(ap_nvram_btradio_struct));
             break;
           default:
-            LOG_ERR("Unknown combo chip id: %04x\n", chipId);
+            LOG_WAN("Unknown combo chip id: %04x\n", chipId);
             return -1;
         }
     }
@@ -321,19 +284,7 @@ int mtk_fw_cfg(void)
             ucNvRamData[38], ucNvRamData[39], ucNvRamData[40]);
 
 
-    return (BT_InitDevice(
-              chipId,
-              ucNvRamData,
-              speed,
-              speed,
-              flow_control,
-              uart_setup_callback) == TRUE ? 0 : -1);
-}
-
-/* MTK specific SCO/PCM configuration */
-int mtk_sco_cfg(void)
-{
-    return (BT_InitSCO() == TRUE ? 0 : -1);
+    return (BT_InitDevice(chipId, ucNvRamData) == TRUE ? 0 : -1);
 }
 
 /* MTK specific deinitialize process */
@@ -373,15 +324,15 @@ int mtk_prepare_off(void)
     return 0;
 }
 
-int mtk_set_fw_assert(uint8_t reason)
+int mtk_set_fw_assert(uint32_t reason)
 {
     if (bt_fd < 0) {
-        LOG_ERR("Invalid bt fd!\n");
+        LOG_ERR("Invalid bt fd! BT is not opened yet\n");
         return -1;
     }
     if (ioctl(bt_fd, COMBO_IOCTL_FW_ASSERT, reason) < 0) {
-        LOG_ERR("Set COMBO FW ASSERT fails, %s, errno[%d]\n", strerror(errno), errno);
-        return errno;
+        LOG_ERR("Set FW assert fails! %s(%d)\n", strerror(errno), errno);
+        return -1;
     }
     return 0;
 }

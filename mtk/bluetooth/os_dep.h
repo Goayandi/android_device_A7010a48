@@ -69,13 +69,14 @@ typedef long long INT64;
 typedef void VOID;
 typedef void* PVOID;
 
+#define UNUSED_ATTR __attribute__((unused))
 
 /* LOG_TAG must be defined before log.h */
 #ifdef  LOG_TAG
 #undef  LOG_TAG
 #endif
 #define LOG_TAG               "[BT]"
-#include <cutils/log.h>
+#include <log/log.h>
 
 #define BT_DRIVER_DEBUG       1
 #define LOG_ERR(f, ...)       ALOGE("%s: " f, __FUNCTION__, ##__VA_ARGS__)

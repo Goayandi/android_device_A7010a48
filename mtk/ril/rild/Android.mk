@@ -37,10 +37,10 @@ LOCAL_SRC_FILES:= \
 	rild.c
 
 LOCAL_SHARED_LIBRARIES := \
-	liblog \
 	libcutils \
-	libril \
-	libdl
+	libdl \
+	liblog \
+	libril
 
 LOCAL_STATIC_LIBRARIES := \
 	rild-prop-md1
@@ -59,7 +59,6 @@ LOCAL_CFLAGS := -DRIL_SHLIB
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_PROPRIETARY_MODULE := true
 LOCAL_MODULE:= rild
-#LOCAL_INIT_RC := rild.rc
 
 include $(BUILD_EXECUTABLE)
 endif
