@@ -627,6 +627,35 @@ public:
 
 };
 
+class SetNodfsCommand : public WifiCommand {
+
+private:
+    u32 mNoDfs;
+public:
+    SetNodfsCommand(wifi_interface_handle handle, u32 nodfs)
+        : WifiCommand("SetNodfsCommand", handle, 0) {
+        mNoDfs = nodfs;
+    }
+    virtual int create() {
+        int ret;
+
+        ret = mMsg.create(GOOGLE_OUI, WIFI_SUBCMD_NODFS_SET);
+        if (ret < 0) {
+            ALOGE("Can't create message to send to driver - %d", ret);
+            return ret;
+        }
+
+        nlattr *data = mMsg.attr_start(NL80211_ATTR_VENDOR_DATA);
+        ret = mMsg.put_u32(WIFI_ATTRIBUTE_NODFS_SET, mNoDfs);
+        if (ret < 0) {
+             return ret;
+        }
+
+        mMsg.attr_end(data);
+        return WIFI_SUCCESS;
+    }
+};
+
 class SetCountryCodeCommand : public WifiCommand {
 private:
     const char *mCountryCode;
@@ -1152,6 +1181,11 @@ wifi_error wifi_get_concurrency_matrix(wifi_interface_handle handle, int set_siz
     return (wifi_error)command.requestResponse();
 }
 
+wifi_error wifi_set_nodfs_flag(wifi_interface_handle handle, u32 nodfs)
+{
+    SetNodfsCommand command(handle, nodfs);
+    return (wifi_error) command.requestResponse();
+}
 
 wifi_error wifi_set_country_code(wifi_interface_handle handle, const char *country_code)
 {
