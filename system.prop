@@ -51,9 +51,6 @@ debug.hwui.render_dirty_regions=false
 # LCD Density
 ro.sf.lcd_density=480
 
-# Enable vold debug
-vold.debug=true
-
 # MTK
 ro.oem_unlock_supported=1
 ro.mtk_gemini_enhancement=1
