@@ -23,8 +23,8 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES :=  \
 	xlog.cpp
-LOCAL_SHARED_LIBRARIES := liblog
-LOCAL_MODULE := libmtk_xlog
+LOCAL_SHARED_LIBRARIES := liblog libvcodecdrv # libvcodecdrv is required
+LOCAL_MODULE := libmtk_xlogs #Dont edit
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_PROPRIETARY_MODULE := true
