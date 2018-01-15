@@ -1,14 +1,45 @@
 #include <stdio.h>
 #include <string.h>
-#include <linux/if.h>
 #include <linux/sockios.h>
 #include <sys/socket.h>
 #include <log/log.h>
 #include <sys/types.h>
 #include <netutils/ifc.h>
+#include "../../../../bionic/libc/kernel/uapi/linux/if.h" //FIX THIS
 
 #define SIOCSTXQSTATE (SIOCDEVPRIVATE + 0)  //start/stop ccmni tx queue
 #define SIOCSCCMNICFG (SIOCDEVPRIVATE + 1)  //configure ccmni/md remapping
+
+struct sockaddr_un {
+  __kernel_sa_family_t sun_family;
+  char sun_path[108];
+};
+
+static int ifc_netd_sock_init(void)
+{
+    int ifc_netd_sock;
+    const int one = 1;
+    struct sockaddr_un netd_addr;
+
+        ifc_netd_sock = socket(AF_UNIX, SOCK_STREAM, 0);
+        if (ifc_netd_sock < 0) {
+            return -1;
+        }
+
+        setsockopt(ifc_netd_sock, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+        memset(&netd_addr, 0, sizeof(netd_addr));
+        netd_addr.sun_family = AF_UNIX;
+        strlcpy(netd_addr.sun_path, "/dev/socket/netd",
+            sizeof(netd_addr.sun_path));
+        if (TEMP_FAILURE_RETRY(connect(ifc_netd_sock,
+                     (const struct sockaddr*) &netd_addr,
+                     sizeof(netd_addr))) != 0) {
+            close(ifc_netd_sock);
+            return -1;
+        }
+
+    return ifc_netd_sock;
+}
 
 int ifc_set_throttle(const char *ifname, int rxKbps, int txKbps)
 {
@@ -85,7 +116,7 @@ int ifc_ccmni_md_cfg(const char *ifname, int md_id)
     int ret = 0;
     int ctl_sock = 0;
 
-    memset(ifr, 0, sizeof(struct ifreq));
+    memset(&ifr, 0, sizeof(struct ifreq));
     strncpy(ifr.ifr_name, ifname, IFNAMSIZ);
     ifr.ifr_name[IFNAMSIZ - 1] = 0;
     ifr.ifr_ifru.ifru_ivalue = md_id;
