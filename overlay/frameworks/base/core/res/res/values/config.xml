@@ -152,6 +152,9 @@
     <!-- If supported, are dreams enabled? (by default) -->
     <bool name="config_dreamsEnabledByDefault">true</bool>
 
+    <!-- Change the left key from menu to recents -->
+    <integer name="config_overrideHasPermanentMenuKey">2</integer>
+
     <!-- Flag indicating if the speed up audio on mt call code should be executed -->
     <bool name="config_speed_up_audio_on_mt_calls">true</bool>
 
