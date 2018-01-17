@@ -13,6 +13,7 @@
 #include <netlink/object-api.h>
 #include <netlink/netlink.h>
 #include <netlink/socket.h>
+//#include <netlink-types.h>
 
 #include "nl80211_copy.h"
 
@@ -121,7 +122,7 @@ class GetRttCapabilitiesCommand : public WifiCommand
     wifi_rtt_capabilities *mCapabilities;
 public:
     GetRttCapabilitiesCommand(wifi_interface_handle iface, wifi_rtt_capabilities *capabitlites)
-        : WifiCommand("GetRttCapabilitiesCommand", iface, 0), mCapabilities(capabitlites)
+        : WifiCommand(iface, 0), mCapabilities(capabitlites)
     {
         memset(mCapabilities, 0, sizeof(*mCapabilities));
     }
@@ -175,19 +176,19 @@ protected:
 };
 
 
-class GetRttResponderInfoCommand : public WifiCommand
+class GetRttAvailableChannelCommand : public WifiCommand
 {
-    wifi_rtt_responder* mResponderInfo;
+    wifi_channel_info* mChannelInfo;
 public:
-    GetRttResponderInfoCommand(wifi_interface_handle iface, wifi_rtt_responder *responderInfo)
-        : WifiCommand("GetRttResponderInfoCommand", iface, 0), mResponderInfo(responderInfo)
+    GetRttAvailableChannelCommand(wifi_interface_handle iface, wifi_channel_info *channel)
+        : WifiCommand(iface, 0), mChannelInfo(channel)
     {
-        memset(mResponderInfo, 0 , sizeof(*mResponderInfo));
+        memset(mChannelInfo, 0 , sizeof(*mChannelInfo));
 
     }
 
     virtual int create() {
-        ALOGD("Creating message to get responder info ; iface = %d", mIfaceInfo->id);
+        ALOGD("Creating message to get available channel ; iface = %d", mIfaceInfo->id);
 
         int ret = mMsg.create(GOOGLE_OUI, RTT_SUBCMD_GETAVAILCHANNEL);
         if (ret < 0) {
@@ -200,7 +201,7 @@ public:
 protected:
     virtual int handleResponse(WifiEvent& reply) {
 
-        ALOGD("In GetRttResponderInfoCommand::handleResponse");
+        ALOGD("In GetRttAvailableChannelCommand::handleResponse");
 
         if (reply.get_cmd() != NL80211_CMD_VENDOR) {
             ALOGD("Ignoring reply with cmd = %d", reply.get_cmd());
@@ -214,9 +215,9 @@ protected:
         int len = reply.get_vendor_data_len();
 
         ALOGD("Id = %0x, subcmd = %d, len = %d, expected len = %d", id, subcmd, len,
-                sizeof(*mResponderInfo));
+                sizeof(*mChannelInfo));
 
-        memcpy(mResponderInfo, data, min(len, (int) sizeof(*mResponderInfo)));
+        memcpy(mChannelInfo, data, min(len, (int) sizeof(*mChannelInfo)));
 
         return NL_OK;
     }
@@ -226,15 +227,16 @@ protected:
 class EnableResponderCommand : public WifiCommand
 {
     wifi_channel_info  mChannelInfo;
+    wifi_channel_info* mChannelUsed;
     unsigned m_max_duration_sec;
-    wifi_rtt_responder* mResponderInfo;
 public:
     EnableResponderCommand(wifi_interface_handle iface, int id, wifi_channel_info channel_hint,
-            unsigned max_duration_seconds, wifi_rtt_responder *responderInfo)
-            : WifiCommand("EnableResponderCommand", iface, 0), mChannelInfo(channel_hint),
-            m_max_duration_sec(max_duration_seconds), mResponderInfo(responderInfo)
+            unsigned max_duration_seconds, wifi_channel_info *channel_used)
+            : WifiCommand(iface, 0), mChannelInfo(channel_hint),
+            m_max_duration_sec(max_duration_seconds), mChannelUsed(channel_used)
     {
-        memset(mResponderInfo, 0, sizeof(*mResponderInfo));
+        memset(mChannelUsed, 0 , sizeof(*mChannelUsed));
+
     }
 
     virtual int create() {
@@ -265,9 +267,9 @@ protected:
         int len = reply.get_vendor_data_len();
 
         ALOGD("Id = %0x, subcmd = %d, len = %d, expected len = %d", id, subcmd, len,
-                sizeof(*mResponderInfo));
+                sizeof(*mChannelUsed));
 
-        memcpy(mResponderInfo, data, min(len, (int) sizeof(*mResponderInfo)));
+        memcpy(mChannelUsed, data, min(len, (int) sizeof(*mChannelUsed)));
 
         return NL_OK;
     }
@@ -279,7 +281,7 @@ class CancelResponderCommand : public WifiCommand
 
 public:
     CancelResponderCommand(wifi_interface_handle iface, int id)
-        : WifiCommand("CancelResponderCommand", iface, 0)/*, mChannelInfo(channel)*/
+        : WifiCommand(iface, 0)/*, mChannelInfo(channel)*/
     {
 
     }
@@ -317,7 +319,7 @@ class RttCommand : public WifiCommand
 public:
     RttCommand(wifi_interface_handle iface, int id, unsigned num_rtt_config,
             wifi_rtt_config rtt_config[], wifi_rtt_event_handler handler)
-        : WifiCommand("RttCommand", iface, id), numRttParams(num_rtt_config), rttParams(rtt_config),
+        : WifiCommand(iface, id), numRttParams(num_rtt_config), rttParams(rtt_config),
         rttHandler(handler)
     {
         memset(rttResults, 0, sizeof(rttResults));
@@ -327,7 +329,7 @@ public:
     }
 
     RttCommand(wifi_interface_handle iface, int id)
-        : WifiCommand("RttCommand", iface, id)
+        : WifiCommand(iface, id)
     {
         currentIdx = 0;
         mCompleted = 0;
@@ -627,20 +629,10 @@ wifi_error wifi_rtt_range_request(wifi_request_id id, wifi_interface_handle ifac
         unsigned num_rtt_config, wifi_rtt_config rtt_config[], wifi_rtt_event_handler handler)
 {
     wifi_handle handle = getWifiHandle(iface);
+
     RttCommand *cmd = new RttCommand(iface, id, num_rtt_config, rtt_config, handler);
-    NULL_CHECK_RETURN(cmd, "memory allocation failure", WIFI_ERROR_OUT_OF_MEMORY);
-    wifi_error result = wifi_register_cmd(handle, id, cmd);
-    if (result != WIFI_SUCCESS) {
-        cmd->releaseRef();
-        return result;
-    }
-    result = (wifi_error)cmd->start();
-    if (result != WIFI_SUCCESS) {
-        wifi_unregister_cmd(handle, id);
-        cmd->releaseRef();
-        return result;
-    }
-    return result;
+    wifi_register_cmd(handle, id, cmd);
+    return (wifi_error)cmd->start();
 }
 
 /* API to cancel RTT measurements */
@@ -649,10 +641,12 @@ wifi_error wifi_rtt_range_cancel(wifi_request_id id,  wifi_interface_handle ifac
 {
     wifi_handle handle = getWifiHandle(iface);
     RttCommand *cmd = new RttCommand(iface, id);
-    NULL_CHECK_RETURN(cmd, "memory allocation failure", WIFI_ERROR_OUT_OF_MEMORY);
-    cmd->cancel_specific(num_devices, addr);
-    cmd->releaseRef();
-    return WIFI_SUCCESS;
+    if (cmd) {
+        cmd->cancel_specific(num_devices, addr);
+        cmd->releaseRef();
+        return WIFI_SUCCESS;
+    }
+    return WIFI_ERROR_INVALID_ARGS;
 }
 
 /* API to get RTT capability */
@@ -663,11 +657,10 @@ wifi_error wifi_get_rtt_capabilities(wifi_interface_handle iface,
     return (wifi_error) command.requestResponse();
 }
 
-/* API to get the responder information */
-wifi_error wifi_rtt_get_responder_info(wifi_interface_handle iface,
-        wifi_rtt_responder* responderInfo)
+/* API to get the channel */
+wifi_error wifi_rtt_get_available_channel(wifi_interface_handle iface, wifi_channel_info* channel)
 {
-    GetRttResponderInfoCommand command(iface, responderInfo);
+    GetRttAvailableChannelCommand command(iface, channel);
     return (wifi_error) command.requestResponse();
 
 }
@@ -676,13 +669,13 @@ wifi_error wifi_rtt_get_responder_info(wifi_interface_handle iface,
  * Enable RTT responder mode.
  * channel_hint - hint of the channel information where RTT responder should be enabled on.
  * max_duration_seconds - timeout of responder mode.
- * wifi_rtt_responder - information for RTT responder e.g. channel used and preamble supported.
+ * channel_used - channel used for RTT responder, NULL if responder is not enabled.
  */
 wifi_error wifi_enable_responder(wifi_request_id id, wifi_interface_handle iface,
                                 wifi_channel_info channel_hint, unsigned max_duration_seconds,
-                                wifi_rtt_responder* responderInfo)
+                                wifi_channel_info* channel_used )
 {
-    EnableResponderCommand command(iface, id, channel_hint, max_duration_seconds, responderInfo);
+    EnableResponderCommand command(iface, id, channel_hint, max_duration_seconds, channel_used);
     return (wifi_error) command.requestResponse();
 }
 

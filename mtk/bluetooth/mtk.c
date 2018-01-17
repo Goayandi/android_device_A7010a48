@@ -226,46 +226,9 @@ int mtk_fw_cfg(void)
           is_memzero(ucNvRamData, sizeof(ap_nvram_btradio_struct))) {
         LOG_WAN("Read NVRAM data fails or NVRAM data all zero!!\n");
         LOG_WAN("Use %04x default value\n", chipId);
-        switch (chipId) {
-          case 0x6628:
-            /* Use MT6628 default value */
-            memcpy(ucNvRamData, &stBtDefault_6628, sizeof(ap_nvram_btradio_struct));
-            break;
-          case 0x6630:
-            /* Use MT6630 default value */
-            memcpy(ucNvRamData, &stBtDefault_6630, sizeof(ap_nvram_btradio_struct));
-            break;
-          case 0x6632:
-            /* Use MT6632 default value */
-            memcpy(ucNvRamData, &stBtDefault_6632, sizeof(ap_nvram_btradio_struct));
-            break;
-          case 0x8163:
-          case 0x8127:
-          case 0x8167:
-          case 0x6582:
-          case 0x6592:
-          case 0x6752:
-          case 0x0321:
-          case 0x0335:
-          case 0x0337:
-          case 0x6580:
-          case 0x6570:
-          case 0x6755:
-          case 0x6797:
-          case 0x6757:
-          case 0x6759:
-          case 0x6763:
-          case 0x6758:
-          case 0x6739:
-          case 0x6771:
-          case 0x6775:
-            /* Use A-D die default value */
-            memcpy(ucNvRamData, &stBtDefault_consys, sizeof(ap_nvram_btradio_struct));
-            break;
-          default:
-            LOG_WAN("Unknown combo chip id: %04x\n", chipId);
-            return -1;
-        }
+        /* Use MT6630 default value */
+        memcpy(ucNvRamData, &stBtDefault_6630, sizeof(ap_nvram_btradio_struct));
+        
     }
 
     LOG_WAN("[BDAddr %02x-%02x-%02x-%02x-%02x-%02x][Voice %02x %02x][Codec %02x %02x %02x %02x] \

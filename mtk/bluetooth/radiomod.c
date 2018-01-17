@@ -157,18 +157,6 @@ HCI_SEQ_T bt_init_preload_script_6632[] =
     {  0  },
 };
 
-HCI_SEQ_T bt_init_preload_script_consys[] =
-{
-    {  GORMcmd_HCC_Set_Local_BD_Addr       }, /*0xFC1A*/
-    {  GORMcmd_HCC_Set_Radio               }, /*0xFC79*/
-    {  GORMcmd_HCC_Set_TX_Power_Offset     }, /*0xFC93*/
-    {  GORMcmd_HCC_Set_Sleep_Timeout       }, /*0xFC7A*/
-    {  GORMcmd_HCC_RESET                   }, /*0x0C03*/
-    {  GORMcmd_HCC_Set_FW_SysLog           }, /*0xFCBE*/
-    {  GORMcmd_HCC_Set_SSP_Debug_Mode      }, /*0x1804*/
-    {  0  },
-};
-
 /**************************************************************************
  *                          F U N C T I O N S                             *
 ***************************************************************************/
@@ -1073,31 +1061,6 @@ VOID *GORM_FW_Init_Thread(UNUSED_ATTR VOID *ptr)
       case 0x6632:
         btinit->cur_script = bt_init_preload_script_6632;
         memcpy(ucDefaultAddr, stBtDefault_6632.addr, 6);
-        break;
-      case 0x8163:
-      case 0x8127:
-      case 0x8167:
-      case 0x6582:
-      case 0x6592:
-      case 0x6752:
-      case 0x0321:
-      case 0x0335:
-      case 0x0337:
-      case 0x6580:
-      case 0x6570:
-      case 0x6755:
-      case 0x6797:
-      case 0x6757:
-      case 0x6759:
-      case 0x6763:
-      case 0x6758:
-      case 0x6739:
-      case 0x6771:
-      case 0x6775:
-        fgConsys = TRUE;
-        LOG_WAN("A-D die chip id: %04x\n", btinit->chip_id);
-        btinit->cur_script = bt_init_preload_script_consys;
-        memcpy(ucDefaultAddr, stBtDefault_consys.addr, 6);
         break;
       default:
         LOG_ERR("Unknown combo chip id: %04x\n", btinit->chip_id);
