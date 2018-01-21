@@ -76,10 +76,6 @@ int mtk_bt_op(bt_vendor_opcode_t opcode, void *param)
         ret = mtk_fw_cfg();
         break;
 
-      case BT_VND_OP_SCO_CFG: /* never called since Android O */
-        LOG_DBG("BT_VND_OP_SCO_CFG\n");
-        break;
-
       case BT_VND_OP_GET_LPM_IDLE_TIMEOUT:
         LOG_DBG("BT_VND_OP_GET_LPM_IDLE_TIMEOUT\n");
         *((uint32_t*)param) = 5000; //ms
@@ -97,18 +93,6 @@ int mtk_bt_op(bt_vendor_opcode_t opcode, void *param)
         LOG_DBG("BT_VND_OP_EPILOG\n");
         ret = mtk_prepare_off();
         break;
-
-#if 0 /* MTK specific vendor opcode, deprecated since Android O */
-      case BT_VND_OP_SET_FW_ASSERT:
-        LOG_DBG("BT_VND_OP_SET_FW_ASSERT 0x%08x\n", *((uint32_t*)param));
-        ret = mtk_set_fw_assert(*((uint32_t*)param));
-        break;
-
-      case BT_VND_OP_SET_PSM_CONTRL:
-        LOG_DBG(" BT_VND_OP_SET_PSM_CONTRL, setting: %d\n", *((bool*)param));
-        ret = mtk_set_psm_control(*((bool*)param));
-        break;
-#endif
 
       default:
         LOG_DBG("Unknown operation %d\n", opcode);
