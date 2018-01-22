@@ -1592,7 +1592,7 @@ INT32 mtk_nfc_sys_i2c_read(UINT8* data, UINT16 len)
            DeBugL = strlen(pDeBugBuffer);   
        }
        sprintf((pDeBugBuffer+DeBugL),"\n");        
-       NFCT("%s", pDeBugBuffer);
+       /*NFCT("%s", pDeBugBuffer);*/
    }
    
    return result;
@@ -1624,7 +1624,7 @@ INT32 mtk_nfc_sys_i2c_write(UINT8* data, UINT16 len)
     }
 
     sprintf((pDeBugBuffer+DeBugL),"\n");      
-    NFCT("%s", pDeBugBuffer);
+    /*NFCT("%s", pDeBugBuffer);*/
     result = write(gInterfaceHandle, data, len);
 
     return result;
