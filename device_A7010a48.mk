@@ -108,7 +108,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
    libmtk_ui \
    libmtk_xlog \
-   libmtk_ifc
+   libmtk_ifc \
+   libmtk_audio
 
 DEVICE_PACKAGE_OVERLAYS := $(LOCAL_PATH)/overlay
 
