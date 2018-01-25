@@ -202,7 +202,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/nfc/nfc.cfg:$(TARGET_COPY_OUT_VENDOR)/etc/nfc.cfg \
     $(LOCAL_PATH)/configs/nfc/nfcse.cfg:$(TARGET_COPY_OUT_VENDOR)/etc/nfcse.cfg \
-    $(LOCAL_PATH)/configs/nfc/nfcee_access.xml:$system/etc/nfcee_access.xml
+    $(LOCAL_PATH)/configs/nfc/nfcee_access.xml:system/etc/nfcee_access.xml
 
 # Media
 PRODUCT_COPY_FILES += \
