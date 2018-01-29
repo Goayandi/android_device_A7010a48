@@ -1669,10 +1669,6 @@ int mtk_nfc_se_map_check(){
 	return SEmap;
 }
 
-
-
-#ifdef HALIMPL
-
 #define NFC_NCI_MT6605_HARDWARE_MODULE_ID "nfc_nci.mt6605"
 //#define NFC_NCI_CONTROLLER "nci"
 
@@ -1889,24 +1885,9 @@ static int nfc_open (const hw_module_t* module, const char* name, hw_device_t** 
 
         // Copy in
         *device = (hw_device_t*) dev;
+        mtk_nfc_sys_init_android()
+        MtkNfcHalAosp_Init()
 
-        if (MTK_NFC_SUCCESS == mtk_nfc_sys_init_android())
-        {
-            //success..
-            if(MTK_NFC_SUCCESS != MtkNfcHalAosp_Init())
-            {
-                retval = -EINVAL;
-            }
-        }
-        else
-        {
-            retval = -EINVAL;
-        }
-
-    }
-    else
-    {
-        retval = -EINVAL;
     }
     NFCT("%s: exit %d" ,__FUNCTION__, retval);
     return retval;
@@ -1931,86 +1912,3 @@ struct nfc_nci_module_t HAL_MODULE_INFO_SYM =
         .methods = &nfc_module_methods,
     },
 };
-
-#endif /* #ifdef HALIMPL */
-
-int main (int argc, char** argv)
-{
-    int result = MTK_NFC_ERROR;
-
-    NFCT("nfcstackp main\n");
-    int logLevel = mtk_nfc_read_log_cfg_porting();
-    NFCT("%s: Set NFC log trace level :%d" ,__FUNCTION__,logLevel);
-    mtk_nfc_set_log_level_porting(logLevel);
-
-    g_NfcTsetMode = 0;
-    if(argc == 2) {
-        if(!strcmp(argv[1],"NFC_TEST_MODE")) {
-            NFCD("ENTERY_TEST_MODE\r\n");
-            g_NfcTsetMode = 1;
-        }
-#ifdef	PORTING_LAYER
-        else if(!strcmp(argv[1],"NFC_AOSP_MODE") || !strcmp(argv[1],"2")  ) {
-            char nci_hal_module[64];
-            const hw_module_t* hw_module = NULL;
-
-            NFCD("ENTERY_AOSP_MODE\r\n");
-            g_NfcTsetMode = 2;
-            // set hw module
-            strlcpy (nci_hal_module, "nfc_nci.mt6605", sizeof(nci_hal_module));
-            NFCD("Load module : %s",nci_hal_module);
-
-            // get hw module
-            result = hw_get_module (nci_hal_module, &hw_module);
-            if(result != MTK_NFC_SUCCESS){
-                NFCD("get_module fail %d \r\n",result);
-                return result;
-            }
-
-            NFCD("get_module success \r\n");
-            // start nfc nci open
-                result = nfc_nci_open (hw_module, &mHalDeviceContext);
-            if (result != MTK_NFC_SUCCESS){
-                NFCD("nfc_nci_open fail !\r\n");
-                return result;
-                }
-
-            // catch user keyin console
-            result = input_message_handle();
-            if(result !=MTK_NFC_SUCCESS){
-                NFCD("input message handle fail!\r\n");
-                return result;
-            }
-            exit(0);
-             //return (MTK_NFC_SUCCESS);
-        }
-#endif
-    }
-    //NFCD("LC_TEST_%d\r\n",argc);
-    //NFCD("LC_TEST_%s\r\n",argv[0]);
-    //NFCD("LC_TEST_%s\r\n",argv[1]);
-    NFCD("argc:%d, argv[0]:%s, argv[1]:%s. \r\n",argc, argv[0], argv[1]);
-    NFCD("g_NfcTsetMode,%d\r\n",g_NfcTsetMode);  // for FM init
-
-    // check small antenna mode
-    g_NfcSmallAntennaMode = mtk_nfc_small_antenna_check();  // card mode only in nfcse.cfg
-    g_NfcSmallAntennaFull = mtk_nfc_small_antenna_full_function();  // full function in nfc.cfg
-    NFCD("g_NfcSmallAntennaMode,%d\r\n",g_NfcSmallAntennaMode);
-    NFCD("g_NfcSmallAntennaFull,%d\r\n",g_NfcSmallAntennaFull);
-    g_NfcSeMap = mtk_nfc_se_map_check();
-    NFCD("g_NfcSEmap,%d\r\n",g_NfcSeMap);
-    result = mtk_nfc_sys_init_android();
-
-    if (MTK_NFC_SUCCESS == result) {
-        mtk_nfc_sys_run();
-    } else {
-        NFCD("mtk_nfc_sys_init_android fail\n");
-    }
-
-    mtk_nfc_sys_deinit_android();
-
-    NFCT("nfcstackp exit\n");
-
-    return (MTK_NFC_SUCCESS);
-}
-
