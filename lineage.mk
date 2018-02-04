@@ -13,14 +13,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Inherit from those products. Most specific first.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
-
-# Inherit from A7010 device
-$(call inherit-product, device/lenovo/A7010a48/device_A7010a48.mk)
-
-# Inherit some common CM stuff.
+# Inherit some common Lineage stuff.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
+
+# Vendor
+$(call inherit-product, vendor/lenovo/A7010a48/A7010a48-vendor.mk)
+
+# Device
+$(call inherit-product, device/lenovo/A7010a48/device_A7010a48.mk)
 
 # Boot animation
 TARGET_SCREEN_WIDTH := 1080

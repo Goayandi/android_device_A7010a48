@@ -24,13 +24,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     camera.disable_zsl_mode=1 \
     persist.service.acm.enable=0 \
     persist.sys.usb.config=mtp,adb \
-    ro.allow.mock.location=0 \
-    ro.debuggable=1 \
-    ro.dalvik.vm.native.bridge=0 \
-    ro.mount.fs=EXT4 \
-    ro.kernel.android.checkjni=0 \
-    ro.telephony.ril.config=fakeiccid \
-    ro.com.android.mobiledata=false
+    ro.debuggable=1
 
 # Hardware-specific permissions
 PRODUCT_COPY_FILES += \
@@ -144,14 +138,6 @@ PRODUCT_PACKAGES += \
     Stk \
     libem_sensor_jni
 
-# Combo
-PRODUCT_PACKAGES += \
-    wmt_loader
-
-# Thermal
-PRODUCT_PACKAGES += \
-    thermal_manager
-
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/thermal/ht120.mtc:$(TARGET_COPY_OUT_VENDOR)/etc/.tp/.ht120.mtc \
     $(LOCAL_PATH)/configs/thermal/thermal.conf:$(TARGET_COPY_OUT_VENDOR)/etc/.tp/thermal.conf \
@@ -169,10 +155,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/init.mt6735.usb.rc:root/init.mt6735.usb.rc \
     $(LOCAL_PATH)/rootdir/ueventd.mt6735.rc:root/ueventd.mt6735.rc \
     $(LOCAL_PATH)/rootdir/init.recovery.mt6735.rc:root/init.recovery.mt6735.rc
-
-# TEEI
-PRODUCT_PACKAGES += \
-    teei_daemon
 
 # Charger
 PRODUCT_PACKAGES += \
@@ -274,7 +256,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libcamera_parameters_mtk \
     libcam.client \
-    libcam.utils.sensorlistener \
     camera.device@1.0-impl \
     camera.device@3.2-impl \
     android.hardware.camera.provider@2.4-service \
@@ -301,7 +282,6 @@ PRODUCT_PACKAGES += \
 
 # Bluetooth
 PRODUCT_PACKAGES += \
-    libbt-vendor \
     android.hardware.bluetooth@1.0-service \
     android.hardware.bluetooth@1.0-impl
 
@@ -345,6 +325,3 @@ PRODUCT_COPY_FILES += \
 # Tethering
 PRODUCT_PROPERTY_OVERRIDES += \
     net.tethering.noprovisioning=true
-
-# Vendor
-$(call inherit-product, vendor/lenovo/A7010a48/A7010a48-vendor.mk)

@@ -1885,8 +1885,8 @@ static int nfc_open (const hw_module_t* module, const char* name, hw_device_t** 
 
         // Copy in
         *device = (hw_device_t*) dev;
-        mtk_nfc_sys_init_android()
-        MtkNfcHalAosp_Init()
+        mtk_nfc_sys_init_android();
+        MtkNfcHalAosp_Init();
 
     }
     NFCT("%s: exit %d" ,__FUNCTION__, retval);
