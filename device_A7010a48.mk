@@ -286,11 +286,13 @@ PRODUCT_PACKAGES += \
     android.hardware.bluetooth@1.0-impl
 
 # ANT
-$(call inherit-product-if-exists, external/ant-wireless/build/ant-wireless.mk)
-
 PRODUCT_PACKAGES += \
-    ANT_RAM_CODE_E1.BIN \
-    ANT_RAM_CODE_E2.BIN \
+        com.dsi.ant.antradio_library \
+        AntHalService \
+        libantradio
+
+PRODUCT_COPY_FILES += \
+        external/ant-wireless/antradio-library/com.dsi.ant.antradio_library.xml:system/etc/permissions/com.dsi.ant.antradio_library.xml \
 
 # Audio
 PRODUCT_PACKAGES += \
