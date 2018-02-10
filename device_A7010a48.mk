@@ -23,7 +23,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.adb.secure=0
     camera.disable_zsl_mode=1 \
     persist.service.acm.enable=0 \
-    persist.sys.usb.config=mtp,adb \
+    persist.sys.usb.config=adb \
     ro.debuggable=1
 
 # Hardware-specific permissions
@@ -86,6 +86,10 @@ PRODUCT_PACKAGES += \
    com.android.future.usb.accessory \
    muxreport \
    terservice
+
+#USB HAL
+PRODUCT_PACKAGES += \
+    android.hardware.usb@1.0-service
 
 # WiFi
 PRODUCT_PACKAGES += \
