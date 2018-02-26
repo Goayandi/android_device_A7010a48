@@ -52,6 +52,17 @@ TARGET_CPU_MEMCPY_OPT_DISABLE := true
 TARGET_INIT_VENDOR_LIB := libinit_mtk
 TARGET_RECOVERY_DEVICE_MODULES := libinit_mtk
 
+# Shims
+TARGET_LD_SHIM_LIBS := \
+    /system/lib/libui.so|/system/vendor/lib/libmtk_ui.so \
+    /system/lib64/libui.so|/system/vendor/lib64/libmtk_ui.so \
+    /system/lib/liblog.so|/system/vendor/lib/libmtk_xlog.so \
+    /system/lib64/liblog.so|/system/vendor/lib64/libmtk_xlog.so \
+    /system/lib/libnetutils.so|/system/vendor/lib/libmtk_ifc.so \
+    /system/lib64/libnetutils.so|/system/vendor/lib64/libmtk_ifc.so \
+    /system/vendor/lib/hw/audio.primary.mt6753.so|/system/vendor/lib/libmtk_audio.so \
+    /system/vendor/lib64/hw/audio.primary.mt6753.so|/system/vendor/lib64/libmtk_audio.so
+
 # EGL
 BOARD_EGL_CFG := $(LOCAL_PATH)/configs/egl.cfg
 USE_OPENGL_RENDERER := true
