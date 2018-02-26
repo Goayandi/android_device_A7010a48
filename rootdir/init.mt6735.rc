@@ -28,7 +28,7 @@ on fs
     mount_all /fstab.mt6735
 
 on post-fs
-    symlink /sdcard /storage/sdcard0
+    symlink storage/sdcard0 /sdcard
 
     chown system system /proc/bootprof
     chown root system /proc/mtprof/cputime
@@ -147,8 +147,8 @@ on post-fs-data
     setrlimit 8 -1 -1
 
     # BT
-    chmod 0660 /dev/stpbt
-    chown bluetooth bluetooth /dev/stpbt
+    #chmod 0660 /dev/stpbt
+    #chown bluetooth bluetooth /dev/stpbt
     chown bluetooth bluetooth /dev/ampc0
     chmod 0660 /dev/ampc0
 
@@ -833,10 +833,6 @@ service PPLAgent /vendor/bin/ppl_agent
     class main
     user system
     group system cache
-
-service fuse_usbotg /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/usbotg /storage/usbotg
-    class late_start
-    disabled
 
 service agpsd /vendor/bin/mtk_agpsd
     class main

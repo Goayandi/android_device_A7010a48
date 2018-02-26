@@ -70,8 +70,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.product.first_api_level=23
 
-# Dalvik/HWUI
-$(call inherit-product-if-exists, frameworks/native/build/phone-xxhdpi-2048-dalvik-heap.mk)
+# HWUI
 $(call inherit-product-if-exists, frameworks/native/build/phone-xxhdpi-2048-hwui-memory.mk)
 
 # RIL
@@ -131,7 +130,8 @@ PRODUCT_PACKAGES += \
     android.hardware.graphics.allocator@2.0-service \
     android.hardware.graphics.composer@2.1-impl \
     android.hardware.memtrack@1.0-impl \
-    android.hardware.graphics.mapper@2.0-impl
+    android.hardware.graphics.mapper@2.0-impl \
+    hwcomposer.mt6753
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
@@ -162,7 +162,7 @@ PRODUCT_COPY_FILES += \
 
 # Charger
 PRODUCT_PACKAGES += \
-    charger_res_images \
+    lineage_charger_res_images \
     charger
 
 # Power
@@ -175,6 +175,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.sensors@1.0-impl.mtk \
     android.hardware.sensors@1.0-service.mtk \
+
+# Connectivity
+PRODUCT_PACKAGES += \
+    wmt_launcher
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -226,7 +230,6 @@ PRODUCT_COPY_FILES += \
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \
-    e2fsck \
     fibmap.f2fs \
     fsck.f2fs \
     mkfs.f2fs \
@@ -235,13 +238,7 @@ PRODUCT_PACKAGES += \
     setup_fs \
     mount.exfat \
     fsck.exfat \
-    mkfs.exfat \
-    fsck.ntfs \
-    mkfs.ntfs \
-    mount.ntfs
-
-# FMRadio
-MTK_FM_SUPPORT := true
+    mkfs.exfat
 
 PRODUCT_PACKAGES += \
     android.hardware.broadcastradio@1.0-impl \
@@ -320,14 +317,3 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/audio/audio_device.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_device.xml \
     $(LOCAL_PATH)/configs/audio/audio_effects.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_effects.xml \
     $(LOCAL_PATH)/configs/audio/media_profiles.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles.xml
-
-#Custom charger images
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/charger/res/values/charger/animation.txt:root/res/values/charger/animation.txt \
-    $(LOCAL_PATH)/charger/res/images/my_battery_scale.png:root/res/images/my_battery_scale.png \
-    $(LOCAL_PATH)/charger/res/images/font_log.png:root/res/images/font_log.png
-
-
-# Tethering
-PRODUCT_PROPERTY_OVERRIDES += \
-    net.tethering.noprovisioning=true

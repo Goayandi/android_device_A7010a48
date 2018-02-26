@@ -15,7 +15,6 @@ index 92a542676bc..d15e4864ffd 100644
 @@ -43,6 +43,7 @@ static const char* kPathWhitelist[] = {
    "/dev/ion",
    "/dev/dri/renderD129", // Fixes b/31172436
-   "/system/framework/org.lineageos.platform-res.apk",
 +  "/proc/ged",
  };
  

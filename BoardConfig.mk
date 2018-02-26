@@ -23,9 +23,6 @@ TARGET_COPY_OUT_VENDOR := system/vendor
 # Device board elements
 include $(LOCAL_PATH)/board/*.mk
 
-# Device vendor board
--include vendor/lenovo/A7010a48/BoardConfigVendor.mk
-
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
 
 #######################################################################
@@ -51,9 +48,12 @@ BOARD_NAME := A7010a48
 # Disable memcpy opt (for audio libraries)
 TARGET_CPU_MEMCPY_OPT_DISABLE := true
 
+# Init
+TARGET_INIT_VENDOR_LIB := libinit_mtk
+TARGET_RECOVERY_DEVICE_MODULES := libinit_mtk
+
 # EGL
 BOARD_EGL_CFG := $(LOCAL_PATH)/configs/egl.cfg
-TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 USE_OPENGL_RENDERER := true
 
 # Flags

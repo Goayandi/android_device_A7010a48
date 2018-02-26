@@ -47,6 +47,8 @@ extern "C" void _ZN7android13GraphicBufferC1Ejjij(
       inWidth, inHeight, inFormat, inUsage, requestorName);
 }
 
+extern "C" void _ZN7android11IDumpTunnel11asInterfaceERKNS_2spINS_7IBinderEEE(){}
+
 #if defined(__LP64__)
 extern "C" void _ZN7android13GraphicBufferC1EPK13native_handleNS0_16HandleWrapMethodEjjijmj(
 	void *self, const native_handle_t* handle,

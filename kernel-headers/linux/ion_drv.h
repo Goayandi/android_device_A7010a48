@@ -1,15 +1,15 @@
 #ifndef __ION_DRV_H__
 #define __ION_DRV_H__
-#include <linux/ion.h>
 
 #define BACKTRACE_SIZE 10
 
 /* Structure definitions */
 
+typedef int ion_user_handle_t;
+
 typedef enum {
 	ION_CMD_SYSTEM,
-	ION_CMD_MULTIMEDIA,
-	ION_CMD_MULTIMEDIA_SEC
+	ION_CMD_MULTIMEDIA
 } ION_CMDS;
 
 typedef enum {
@@ -17,8 +17,7 @@ typedef enum {
 	ION_MM_SET_DEBUG_INFO,
 	ION_MM_GET_DEBUG_INFO,
 	ION_MM_SET_SF_BUF_INFO,
-	ION_MM_GET_SF_BUF_INFO,
-	ION_MM_CONFIG_BUFFER_EXT
+	ION_MM_GET_SF_BUF_INFO
 } ION_MM_CMDS;
 
 typedef enum {
@@ -46,16 +45,13 @@ typedef enum {
 	ION_ERROR_CONFIG_LOCKED = 0x10000
 } ION_ERROR_E;
 
-/* mm or mm_sec heap flag which is do not conflist with ION_HEAP_FLAG_DEFER_FREE */
 #define ION_FLAG_MM_HEAP_INIT_ZERO (1 << 16)
 #define ION_FLAG_MM_HEAP_SEC_PA (1 << 18)
-
-#define ION_FLAG_GET_FIXED_PHYS 0x103
 
 typedef struct ion_sys_cache_sync_param {
 	union {
 		ion_user_handle_t handle;
-		void *kernel_handle;
+		struct ion_handle *kernel_handle;
 	};
 	void *va;
 	unsigned int size;
@@ -67,8 +63,6 @@ typedef enum {
 	ION_DMA_UNMAP_AREA,
 	ION_DMA_MAP_AREA_VA,
 	ION_DMA_UNMAP_AREA_VA,
-	ION_DMA_FLUSH_BY_RANGE,
-	ION_DMA_FLUSH_BY_RANGE_USE_VA,
 	ION_DMA_CACHE_FLUSH_ALL
 } ION_DMA_TYPE;
 
@@ -92,13 +86,13 @@ typedef struct ion_dma_param {
 typedef struct ion_sys_get_phys_param {
 	union {
 		ion_user_handle_t handle;
-		void *kernel_handle;
+		struct ion_handle *kernel_handle;
 	};
 	unsigned int phy_addr;
 	unsigned long len;
 } ion_sys_get_phys_param_t;
 
-#define ION_MM_DBG_NAME_LEN 48
+#define ION_MM_DBG_NAME_LEN 16
 #define ION_MM_SF_BUF_INFO_LEN 16
 
 typedef struct __ion_sys_client_name {
@@ -140,19 +134,18 @@ typedef struct ion_sys_data {
 typedef struct ion_mm_config_buffer_param {
 	union {
 		ion_user_handle_t handle;
-		void *kernel_handle;
+		struct ion_handle *kernel_handle;
 	};
 	int eModuleID;
 	unsigned int security;
 	unsigned int coherent;
-	unsigned int reserve_iova_start;
-	unsigned int reserve_iova_end;
 } ion_mm_config_buffer_param_t;
+
 
 typedef struct __ion_mm_buf_debug_info {
 	union {
 		ion_user_handle_t handle;
-		void *kernel_handle;
+		struct ion_handle *kernel_handle;
 	};
 	char dbg_name[ION_MM_DBG_NAME_LEN];
 	unsigned int value1;
@@ -164,7 +157,7 @@ typedef struct __ion_mm_buf_debug_info {
 typedef struct __ion_mm_sf_buf_info {
 	union {
 		ion_user_handle_t handle;
-		void *kernel_handle;
+		struct ion_handle *kernel_handle;
 	};
 	unsigned int info[ION_MM_SF_BUF_INFO_LEN];
 } ion_mm_sf_buf_info_t;
