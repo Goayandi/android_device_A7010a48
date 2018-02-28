@@ -1,2 +1,0 @@
-#SurfaceFlinger file type for sysfs access
-type sysfs_graphics, sysfs_type, fs_type;

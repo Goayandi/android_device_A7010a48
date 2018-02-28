@@ -41,14 +41,14 @@ LOCAL_SHARED_LIBRARIES := \
 	libion_mtk \
 	libdpframework \
 	libhardware \
-	libgrilloc_extra \
+	libgralloc_extra \
 	libdl \
 	libbinder \
 	libpower \
 	libgui \
 	libm4u \
 	libged \
-	libui_ixt \
+	libui_ext \
 	libperfservicenative
 
 # HAL module implemenation stored in

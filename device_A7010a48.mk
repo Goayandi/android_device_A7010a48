@@ -20,7 +20,6 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.secure=0 \
-    ro.adb.secure=0
     camera.disable_zsl_mode=1 \
     persist.service.acm.enable=0 \
     persist.sys.usb.config=adb \
@@ -61,10 +60,6 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.fingerprint.xml:system/etc/permissions/android.hardware.fingerprint.xml \
     frameworks/native/data/etc/android.hardware.sensor.stepcounter.xml:system/etc/permissions/android.hardware.sensor.stepcounter.xml \
     frameworks/native/data/etc/android.hardware.sensor.stepdetector.xml:system/etc/permissions/android.hardware.sensor.stepdetector.xml
-
-# HIDL
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/manifest.xml:$(TARGET_COPY_OUT_VENDOR)/manifest.xml
 
 # Device was launched with M
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -139,7 +134,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf
 
 PRODUCT_PACKAGES += \
-    Stk \
     libem_sensor_jni
 
 PRODUCT_COPY_FILES += \
@@ -220,34 +214,21 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-impl
 
-# GPS library
-PRODUCT_PACKAGES += \
-    gps.mt6753 \
-    libcurl
-
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/agps_profiles_conf2.xml:$(TARGET_COPY_OUT_VENDOR)/etc/agps_profiles_conf2.xml
 
 # Filesystem management tools
 PRODUCT_PACKAGES += \
-    fibmap.f2fs \
-    fsck.f2fs \
-    mkfs.f2fs \
     make_ext4fs \
     resize2fs \
     setup_fs \
     mount.exfat \
-    fsck.exfat \
     mkfs.exfat
 
 PRODUCT_PACKAGES += \
     android.hardware.broadcastradio@1.0-impl \
     libfmjni \
     FMRadio
-
-# Trusted face
-PRODUCT_PACKAGES += \
-    libprotobuf-cpp-full
 
 # Display
 PRODUCT_PACKAGES += \
@@ -270,7 +251,7 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    fingerprint.mt6753 \
+    #fingerprint.mt6753 \
     android.hardware.biometrics.fingerprint@2.1-service
 
 # Vibrator

@@ -1490,19 +1490,6 @@ sp<HWCLayer> HWCDisplay::getLayer(const hwc2_layer_t& layer_id)
     if (iter == m_layers.end())
     {
         HWC_LOGE("(%" PRIu64 ") %s %" PRIu64, getId(), __func__, layer_id);
-        for (auto& kv : m_layers)
-        {
-            auto& layer = kv.second;
-            HWC_LOGE("(%" PRIu64 ") getLayer() %s", getId(), layer->toString8().string());
-        }
-        if (HWC_DISPLAY_EXTERNAL == getId())
-        {
-            HWC_LOGE("warning!!! external display getLayer failed!");
-        }
-        else
-        {
-            abort();
-        }
     }
     return (iter == m_layers.end()) ? nullptr : iter->second;
 }
@@ -2204,7 +2191,6 @@ void HWCMediator::createExternalDisplay()
     if (m_displays[HWC_DISPLAY_EXTERNAL]->isConnected())
     {
         HWC_LOGE("external display is already connected %s", __func__);
-        abort();
     }
     else
     {
@@ -2217,7 +2203,6 @@ void HWCMediator::destroyExternalDisplay()
     if (m_displays[HWC_DISPLAY_EXTERNAL]->isConnected())
     {
         HWC_LOGE("external display is not disconnected %s", __func__);
-        abort();
     }
     else
     {
@@ -4149,7 +4134,8 @@ int32_t /*hwc2_error_t*/ HWCMediator::layerStateSetCompositionType(
             break;
 
         case HWC2_COMPOSITION_SIDEBAND:
-            abort();
+            return HWC2_ERROR_UNSUPPORTED;
+	    break;
 
         case HWC2_COMPOSITION_SOLID_COLOR:
             if (layer->getHwlayerType() != HWC_LAYER_TYPE_DIM)

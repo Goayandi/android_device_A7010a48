@@ -6,7 +6,7 @@ LOCAL_PATH := $(call my-dir)
 #
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := libgrilloc_extra
+LOCAL_MODULE := libgralloc_extra
 
 LOCAL_SRC_FILES := \
     ge_operator.cpp \

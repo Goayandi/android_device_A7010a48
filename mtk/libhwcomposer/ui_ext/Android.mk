@@ -2,7 +2,7 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := libui_ixt
+LOCAL_MODULE := libui_ext
 LOCAL_PROPRIETARY_MODULE := true
 
 LOCAL_MODULE_TAGS := optional
